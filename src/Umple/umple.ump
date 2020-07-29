@@ -1,0 +1,48 @@
+class Patient{
+  name;
+  address;
+  phoneNUmber;
+  int healthNumber;
+  1--* Test;
+  *--* Symptom;
+  *--* Patient contactList;
+  public String toString(){
+    String returner ="Name: "+this.getName()+"\nAddress: "+this.getAddress()+"/nPhone: "+this.getPhoneNumber()+"\nHealth Number: "+this.getHealthNumber()+"\nTests completed: ";
+    List<Test> testsDone = this.getTests();
+    for(Test tester: testsDone){
+      returner=returner+"\n"+tester.getTestType()+", "+tester.getDate()+", "+Boolean.toSTring(tester.getOUtcome());
+    }
+    return returner;
+  }
+  public static void main(String[] args){
+    Patient pat = new Patient("Pat","123 Testing Street","9055092222",1234);
+    Test testOne = new VirusTest("July 1st","12:01","MSH","Virus",false,"Morton Biochemical","MSH Labs","July 3rd",pat);
+    Test testTwo = new AntibodyTest("July 2nd","14:36","Ottawa General Hospital","Antibody",false,"Morton Biochemical", "Ottawa General Labs","July 2nd",pat);
+    pat.addTest(testOne);
+    pat.addTest(testTwo);
+    pat.toString();
+  }
+}
+class Test
+{
+  date;
+  time;
+  testLocation;
+  testType;
+  Boolean outcome;
+  manufacturer;
+  processingLab;
+  processingDate;
+}
+class Symptom{
+  startDate;
+  endDate;
+  name;
+  description;
+}
+class AntiBodyTest{
+  isA Test;
+}
+class VirusTest{
+  isA Test;
+}
