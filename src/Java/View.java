@@ -8,10 +8,11 @@ import java.awt.event.*;
 import javax.swing.*;
 public class View extends JFrame implements ActionListener{
 	//The master JPanel that will control the view
-	JPanel cards;
-	JComboBox patField;
+	private JPanel cards;
+	private DefaultComboBoxModel model;
+	private JComboBox patField,patField2,patField3,patField4;
 	//using full name of List as java.awt.List and java.util.List are both imported
-	java.util.List<Patient> patients;
+	private java.util.List<Patient> patients;
 	public View(){
 		//Setting close operation and window size
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -20,6 +21,9 @@ public class View extends JFrame implements ActionListener{
 		patients=new ArrayList<Patient>();
 		//init the combo box
 		patField=new JComboBox();
+		patField2=new JComboBox();
+		patField3=new JComboBox();
+		patField4=new JComboBox();
 		//All the individual views that will be switched between
 		JPanel menu = new JPanel(new GridLayout(0,2,50,50));
 		menu.setName("menu");
@@ -166,11 +170,11 @@ public class View extends JFrame implements ActionListener{
 		JLabel start = new JLabel("Start Date: ",SwingConstants.RIGHT);
 		JLabel end = new JLabel("End Date: ",SwingConstants.RIGHT);
 		JLabel desc = new JLabel("Description: ",SwingConstants.RIGHT);
+		JLabel pat = new JLabel("Patient: ",SwingConstants.RIGHT);
 		JTextField nameField = new JTextField();
 		JTextField startField = new JTextField();
 		JTextField endField = new JTextField();
 		JTextField descField = new JTextField();
-
 		//Setting up submit and cancel buttons
 		JButton submit = new JButton("Submit Symptom");
 		JButton cancel = new JButton("Cancel");
@@ -185,6 +189,8 @@ public class View extends JFrame implements ActionListener{
 		panel.add(startField);
 		panel.add(end);
 		panel.add(endField);
+		panel.add(pat);
+		panel.add(patField2);
 		panel.add(cancel);
 		panel.add(submit);
 	}
@@ -202,25 +208,28 @@ public class View extends JFrame implements ActionListener{
 	public void actionPerformed(ActionEvent e){
 		JButton source = (JButton) e.getSource();
 		CardLayout cl = (CardLayout)(cards.getLayout());
+		//Upon clicking a new button, we must refresh the list of available patients
+		//Creates a new combobox model with the updated String array of patients and applies it in cases that require it
+		model = new DefaultComboBoxModel(patients.toArray());
 		switch(source.getText()){
 			case "NEW PATIENT"://Opens patient creation page
 				cl.show(cards,"newPat");
 				break;
 			case "NEW TEST"://Opens test creation page
-				//Upon clicking the new test button, we must refresh the list of available patients
-				//Creates a new combobox model with the updated String array of patients and applies it 
-				DefaultComboBoxModel model = new DefaultComboBoxModel(patients.toArray());
 				patField.setModel(model);
 				cl.show(cards,"newTest");
 				break;
 			case "NEW SYMPTOMS":
+				patField2.setModel(model);
 				cl.show(cards,"newSymp");
 				break;
 			case "VIEW PATIENTS":
-				cl.show(cards,"view patients");
+				patField3.setModel(model);
+				cl.show(cards,"viewPat");
 				break;
 			case "ADD CONNECTION":
-				cl.show(cards,"add connection");
+				patField4.setModel(model);
+				cl.show(cards,"addConn");
 				break;
 			case "Cancel": //generalized cancel button
 				//Finds and clears all JTextFields currently displayed
@@ -301,6 +310,33 @@ public class View extends JFrame implements ActionListener{
 				}
 				break;
 
+			case"Submit Symptom":
+				String[] data3 = new String[4];
+				int j = 0;
+				Patient hold2 = null;
+				Boolean flag3=false;
+				for(Component comp:currCard(cl).getComponents()){
+					if(comp instanceof JTextField){
+						if(((JTextField) comp).getText().equals("")){
+							JOptionPane.showMessageDialog(this, "Please fill in all textboxes.","Error",JOptionPane.ERROR_MESSAGE);
+							break;
+						} else {
+							data3[j]=((JTextField) comp).getText();
+							j++;
+						}
+					} else if(comp instanceof JComboBox){
+						hold2=(Patient)((JComboBox)comp).getSelectedItem();
+						j++;
+						flag3=true;
+					}
+				}
+				if(flag3){
+					Symptom smp = new Symptom(data3[3],data3[2],data3[0],data3[1]);
+					hold2.addSymptom(smp);
+					clearBoxes(cl);
+					cl.show(cards,"menu");
+				}
+				break;
 		}
 	}
 	//Clears all the textfields in the currently displayed JPanel
