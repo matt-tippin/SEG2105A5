@@ -1,11 +1,11 @@
 /*PLEASE DO NOT EDIT THIS CODE*/
-/*This code was generated using the UMPLE 1.29.1.4969.ccd387f31 modeling language!*/
+/*This code was generated using the UMPLE 1.30.0.5074.a43557235 modeling language!*/
 
 
 import java.util.*;
 
 // line 2 "model.ump"
-// line 61 "model.ump"
+// line 49 "model.ump"
 public class Patient
 {
 
@@ -77,10 +77,6 @@ public class Patient
     return wasSet;
   }
 
-  /**
-   * Patient[] contacts;
-   * Symptom[] sympts;
-   */
   public String getName()
   {
     return name;
@@ -226,9 +222,9 @@ public class Patient
     return 0;
   }
   /* Code from template association_AddManyToOne */
-  public Test addTest(String aDate, String aTime, String aTestLocation, String aTestType, boolean aOutcome, String aManufacturer, String aProcessingLab, String aProcessedDate)
+  public Test addTest(String aDate, String aTime, String aTestLocation, String aTestType, boolean aOutcome, String aManufacturer, String aProcessingLab, String aProcessingDate)
   {
-    return new Test(aDate, aTime, aTestLocation, aTestType, aOutcome, aManufacturer, aProcessingLab, aProcessedDate, this);
+    return new Test(aDate, aTime, aTestLocation, aTestType, aOutcome, aManufacturer, aProcessingLab, aProcessingDate, this);
   }
 
   public boolean addTest(Test aTest)
@@ -566,145 +562,20 @@ public class Patient
     }
   }
 
-  // line 14 "model.ump"
+  // line 11 "model.ump"
    public String toString(){
-    String returner = "";
-    returner = returner+"Name: "+this.getName()+"\nAddress: "+this.getAddress()+"\nPhone: "+this.getPhoneNumber()+"\nHealth Number: "+this.getHealthNumber()+"\nTests completed:";
-    List<Test> testsDone = this.getTests();
-      for(Test tester: testsDone){
-        returner=returner+"\n"+tester.getTestType()+", "+tester.getDate()+", "+Boolean.toString(tester.getOutcome());
-      }
-    return returner;
+    return this.getName();
   }
 
-  // line 23 "model.ump"
-   public static  void main(String [] args){
-    Thread.currentThread().setUncaughtExceptionHandler(new UmpleExceptionHandler());
-    Thread.setDefaultUncaughtExceptionHandler(new UmpleExceptionHandler());
-    Patient pat = new Patient("Pat the Patient", "123 Testing Street", "9055092222",1234);
-    Test testOne = new VirusTest("July 1st", "12:01", "Markham Stouffville Hosptial","Virus",false,"Morton Biochemical", "Markham Stouffville Labs","July 3rd",pat);
-    Test testTwo = new AntibodyTest("July 2nd", "14:36", "Ottawa General Hosptial","Antibody",false,"Morton Biochemical", "Ottawa General Labs","July 2nd", pat);
-    pat.addTest(testOne);
-    pat.addTest(testTwo);
-    System.out.println(pat.toString());
+  // line 14 "model.ump"
+   public String display(){
+    String str = "Name: "+this.getName()+"\nAddress: "+this.getAddress()+"\nPhone: "+this.getPhoneNumber()+"\nHealth Number: "+this.getHealthNumber()+"\nTests: ";
+    for(Test testy: tests){
+      str=str+"\n"+testy;
+    }
+    return str;
   }
 
-  public static class UmpleExceptionHandler implements Thread.UncaughtExceptionHandler
-  {
-    public void uncaughtException(Thread t, Throwable e)
-    {
-      translate(e);
-      if(e.getCause()!=null)
-      {
-        translate(e.getCause());
-      }
-      e.printStackTrace();
-    }
-    public void translate(Throwable e)
-    {
-      java.util.List<StackTraceElement> result = new java.util.ArrayList<StackTraceElement>();
-      StackTraceElement[] elements = e.getStackTrace();
-      try
-      {
-        for(StackTraceElement element:elements)
-        {
-          String className = element.getClassName();
-          String methodName = element.getMethodName();
-          boolean methodFound = false;
-          int index = className.lastIndexOf('.')+1;
-          try {
-            java.lang.reflect.Method query = this.getClass().getMethod(className.substring(index)+"_"+methodName,new Class[]{});
-            UmpleSourceData sourceInformation = (UmpleSourceData)query.invoke(this,new Object[]{});
-            for(int i=0;i<sourceInformation.size();++i)
-            {
-              // To compensate for any offsets caused by injected code we need to loop through the other references to this function
-              //  and adjust the start / length of the function.
-              int functionStart = sourceInformation.getJavaLine(i) + (("main".equals(methodName))?3:1);
-              int functionEnd = functionStart + sourceInformation.getLength(i);
-              int afterInjectionLines = 0;
-              //  We can leverage the fact that all inject statements are added to the uncaught exception list 
-              //   before the functions that they are within
-              for (int j = 0; j < i; j++) {
-                if (sourceInformation.getJavaLine(j) - 1 >= functionStart &&
-                    sourceInformation.getJavaLine(j) - 1 <= functionEnd &&
-                    sourceInformation.getJavaLine(j) - 1 <= element.getLineNumber()) {
-                    // A before injection, +2 for the comments surrounding the injected code
-                    if (sourceInformation.getJavaLine(j) - 1 == functionStart) {
-                        functionStart += sourceInformation.getLength(j) + 2;
-                        functionEnd += sourceInformation.getLength(j) + 2;
-                    } else {
-                        // An after injection
-                        afterInjectionLines += sourceInformation.getLength(j) + 2;
-                        functionEnd += sourceInformation.getLength(j) + 2;
-                    }
-                }
-              }
-              int distanceFromStart = element.getLineNumber() - functionStart - afterInjectionLines;
-              if(distanceFromStart>=0&&distanceFromStart<=sourceInformation.getLength(i))
-              {
-                result.add(new StackTraceElement(element.getClassName(),element.getMethodName(),sourceInformation.getFileName(i),sourceInformation.getUmpleLine(i)+distanceFromStart));
-                methodFound = true;
-                break;
-              }
-            }
-          }
-          catch (Exception e2){}
-          if(!methodFound)
-          {
-            result.add(element);
-          }
-        }
-      }
-      catch (Exception e1)
-      {
-        e1.printStackTrace();
-      }
-      e.setStackTrace(result.toArray(new StackTraceElement[0]));
-    }
-  //The following methods Map Java lines back to their original Umple file / line    
-    public UmpleSourceData Patient_toString(){ return new UmpleSourceData().setFileNames("model.ump").setUmpleLines(13).setJavaLines(569).setLengths(7);}
-    public UmpleSourceData Patient_main(){ return new UmpleSourceData().setFileNames("model.ump").setUmpleLines(22).setJavaLines(580).setLengths(6);}
-
-  }
-  public static class UmpleSourceData
-  {
-    String[] umpleFileNames;
-    Integer[] umpleLines;
-    Integer[] umpleJavaLines;
-    Integer[] umpleLengths;
-    
-    public UmpleSourceData(){
-    }
-    public String getFileName(int i){
-      return umpleFileNames[i];
-    }
-    public Integer getUmpleLine(int i){
-      return umpleLines[i];
-    }
-    public Integer getJavaLine(int i){
-      return umpleJavaLines[i];
-    }
-    public Integer getLength(int i){
-      return umpleLengths[i];
-    }
-    public UmpleSourceData setFileNames(String... filenames){
-      umpleFileNames = filenames;
-      return this;
-    }
-    public UmpleSourceData setUmpleLines(Integer... umplelines){
-      umpleLines = umplelines;
-      return this;
-    }
-    public UmpleSourceData setJavaLines(Integer... javalines){
-      umpleJavaLines = javalines;
-      return this;
-    }
-    public UmpleSourceData setLengths(Integer... lengths){
-      umpleLengths = lengths;
-      return this;
-    }
-    public int size(){
-      return umpleFileNames.length;
-    }
-  }
 }
+
+
