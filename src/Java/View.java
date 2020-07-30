@@ -9,14 +9,13 @@ import javax.swing.*;
 public class View extends JFrame implements ActionListener{
 	//The master JPanel that will control the view
 	private JPanel cards;
-	private DefaultComboBoxModel model;
-	private JComboBox patField,patField2,patField3,patField4;
+	private JComboBox patField,patField2,patField3,patField4,patField5;
 	//using full name of List as java.awt.List and java.util.List are both imported
 	private java.util.List<Patient> patients;
 	public View(){
 		//Setting close operation and window size
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setPreferredSize(new Dimension(760,760));
+		setPreferredSize(new Dimension(900,900));
 		//initializing the patient list
 		patients=new ArrayList<Patient>();
 		//init the combo box
@@ -24,6 +23,7 @@ public class View extends JFrame implements ActionListener{
 		patField2=new JComboBox();
 		patField3=new JComboBox();
 		patField4=new JComboBox();
+		patField5=new JComboBox();
 		//All the individual views that will be switched between
 		JPanel menu = new JPanel(new GridLayout(0,2,50,50));
 		menu.setName("menu");
@@ -33,9 +33,9 @@ public class View extends JFrame implements ActionListener{
 		newTest.setName("newTest");
 		JPanel newSymp = new JPanel(new GridLayout(0,2,25,50));
 		newSymp.setName("newSymp");
-		JPanel viewPat = new JPanel();
+		JPanel viewPat = new JPanel(new GridLayout(0,2,25,50));
 		viewPat.setName("viewPat");
-		JPanel addConn = new JPanel();
+		JPanel addConn = new JPanel(new GridLayout(0,2,25,100));
 		addConn.setName("addConn");
 		//Cards will control the other panels using CardLayout
 		cards = new JPanel(new CardLayout());
@@ -45,6 +45,8 @@ public class View extends JFrame implements ActionListener{
 		setupNewPat(newPat);
 		setupNewTest(newTest);
 		setupNewSymp(newSymp);
+		setupNewConn(addConn);
+		setupViewPat(viewPat);
 		//adding other panels to cards
 		cards.add(menu,menu.getName());
 		cards.add(newPat,newPat.getName());
@@ -195,6 +197,80 @@ public class View extends JFrame implements ActionListener{
 		panel.add(submit);
 	}
 
+	public void setupNewConn(JPanel panel){
+		//Creating labels for the page
+		JLabel p1=new JLabel("Person 1: ",SwingConstants.RIGHT);
+		JLabel p2=new JLabel("Person 2: ",SwingConstants.RIGHT);
+		//Setting up submit and cancel buttons
+		JButton submit = new JButton("Submit Connection");
+		JButton cancel = new JButton("Cancel");
+		submit.addActionListener(this);
+		cancel.addActionListener(this);
+		panel.add(p1);
+		panel.add(patField3);
+		panel.add(p2);
+		panel.add(patField4);
+		panel.add(cancel);
+		panel.add(submit);
+	}
+
+	public void setupViewPat(JPanel panel){
+		//Creating labels
+		JLabel pat=new JLabel("Patient: ",SwingConstants.RIGHT);
+		JLabel name = new JLabel("Name: ",SwingConstants.RIGHT);
+		JLabel address = new JLabel("Address :",SwingConstants.RIGHT);
+		JLabel phone = new JLabel("Phone :",SwingConstants.RIGHT);
+		JLabel health = new JLabel("Health Number: ",SwingConstants.RIGHT);
+		JLabel tests = new JLabel("Tests: ",SwingConstants.RIGHT);
+		JLabel symps = new JLabel("Symptoms: ",SwingConstants.RIGHT);
+		JLabel cont = new JLabel("Had contact with: ",SwingConstants.RIGHT);
+		//Creating uneditable text fields to display info, as well as setting wrap to be on.
+		JTextField nameField = new JTextField();
+		JTextField addressField = new JTextField();
+		JTextField phoneField = new JTextField();
+		JTextField healthField = new JTextField();
+		JTextArea testField = new JTextArea();
+		testField.setLineWrap(true);
+		testField.setWrapStyleWord(true);
+		JTextArea sympField = new JTextArea();
+		sympField.setLineWrap(true);
+		sympField.setWrapStyleWord(true);
+		JTextArea contField = new JTextArea();
+		contField.setLineWrap(true);
+		contField.setWrapStyleWord(true);
+
+
+		nameField.setEditable(false);
+		addressField.setEditable(false);
+		phoneField.setEditable(false);
+		healthField.setEditable(false);
+
+		//Setup cancel and update button
+		JButton cancel = new JButton("Cancel");
+		JButton update = new JButton("Update");
+		cancel.addActionListener(this);
+		update.addActionListener(this);
+
+		//add components
+		panel.add(pat);
+		panel.add(patField5);
+		panel.add(name);
+		panel.add(nameField);
+		panel.add(address);
+		panel.add(addressField);
+		panel.add(phone);
+		panel.add(phoneField);
+		panel.add(health);
+		panel.add(healthField);
+		panel.add(tests);
+		panel.add(testField);
+		panel.add(symps);
+		panel.add(sympField);
+		panel.add(cont);
+		panel.add(contField);
+		panel.add(cancel);
+		panel.add(update);
+	}
 	//returns the currently displayed JFrame
 	public JPanel currCard(CardLayout layout){
 		JPanel top = null;
@@ -210,7 +286,9 @@ public class View extends JFrame implements ActionListener{
 		CardLayout cl = (CardLayout)(cards.getLayout());
 		//Upon clicking a new button, we must refresh the list of available patients
 		//Creates a new combobox model with the updated String array of patients and applies it in cases that require it
-		model = new DefaultComboBoxModel(patients.toArray());
+		DefaultComboBoxModel model = new DefaultComboBoxModel(patients.toArray());
+		DefaultComboBoxModel model2 = new DefaultComboBoxModel(patients.toArray());
+		
 		switch(source.getText()){
 			case "NEW PATIENT"://Opens patient creation page
 				cl.show(cards,"newPat");
@@ -224,11 +302,12 @@ public class View extends JFrame implements ActionListener{
 				cl.show(cards,"newSymp");
 				break;
 			case "VIEW PATIENTS":
-				patField3.setModel(model);
+				patField5.setModel(model);
 				cl.show(cards,"viewPat");
 				break;
-			case "ADD CONNECTION":
-				patField4.setModel(model);
+			case "NEW CONNECTION":
+				patField3.setModel(model);
+				patField4.setModel(model2);
 				cl.show(cards,"addConn");
 				break;
 			case "Cancel": //generalized cancel button
@@ -337,6 +416,84 @@ public class View extends JFrame implements ActionListener{
 					cl.show(cards,"menu");
 				}
 				break;
+
+			case"Submit Connection":
+				Patient[] holder = new Patient[2];
+				int l=0;
+				for(Component comp:currCard(cl).getComponents()){
+					if(comp instanceof JComboBox){
+						holder[l]=(Patient)((JComboBox)comp).getSelectedItem();
+						l++;
+					}
+				}
+				if(holder[0]==holder[1]){
+					JOptionPane.showMessageDialog(this, "Please select to DISTINCT patients.","Error",JOptionPane.ERROR_MESSAGE);
+				} else {
+					holder[0].addContactList(holder[1]);
+					holder[1].addContactList(holder[0]);
+					cl.show(cards,"menu");
+				}
+				break;
+
+			case"Update":
+				Patient viewed = null;
+				int o = 0;
+				String tests="";
+				String sym="";
+				String cont="";
+				for(Component comp:currCard(cl).getComponents()){
+					if(comp instanceof JComboBox){
+						viewed=(Patient)((JComboBox)comp).getSelectedItem();
+						for(Test testt: viewed.getTests()){
+							tests=tests+testt.toString();
+							tests=tests+"\n";
+						}
+						for(Symptom symm: viewed.getSymptoms()){
+							sym=sym+symm.toString();
+							sym=sym+"\n";
+						}
+						for(Patient connn: viewed.getContactList()){
+							cont=cont+connn.toString();
+							cont=cont+"\n";
+						}
+					}
+					if(comp instanceof JTextField){
+						switch(o){
+							case 0:
+								((JTextField)comp).setText(viewed.getName());
+								o++;
+								break;
+							case 1:
+								((JTextField)comp).setText(viewed.getAddress());
+								o++;
+								break;
+							case 2:
+								((JTextField)comp).setText(viewed.getPhoneNumber());
+								o++;
+								break;
+							case 3:
+								((JTextField)comp).setText(Integer.toString(viewed.getHealthNumber()));
+								o++;
+								break;
+						}
+					}
+					if(comp instanceof JTextArea){
+						switch(o){
+							case 4:
+								((JTextArea)comp).setText(tests);
+								o++;
+								break;
+							case 5:
+								((JTextArea)comp).setText(sym);
+								o++;
+								break;
+							case 6:
+								((JTextArea)comp).setText(cont);
+								o++;
+								break;
+						}
+					}
+				}
 		}
 	}
 	//Clears all the textfields in the currently displayed JPanel
@@ -344,6 +501,9 @@ public class View extends JFrame implements ActionListener{
 		for(Component comp: currCard(cl).getComponents()){
 			if(comp instanceof JTextField){
 				((JTextField) comp).setText("");
+			}
+			if(comp instanceof JTextArea){
+				((JTextArea)comp).setText("");
 			}
 		}
 	}
