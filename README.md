@@ -1,5 +1,5 @@
 # SEG2105A5
-Assignment 5 for SEG2105 at uOttawa.
+Assignment 5 for SEG2105 at uOttawa. Created by: Matt Tippin (Student #300066841)
 
 User Story 1: Secretary enters a new patient into the system, including their name, address, phone number, and health number.
 
